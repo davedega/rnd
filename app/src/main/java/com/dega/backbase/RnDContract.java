@@ -22,7 +22,7 @@ public interface RnDContract {
 
         void setPresenter(Presenter presenter);
 
-        void showEntriesInList(Context context, List<Entry> entries);
+        void showEntriesInList(Context context, List<Entry> loadedEntries);
 
         void showErrorMessage(int message);
 

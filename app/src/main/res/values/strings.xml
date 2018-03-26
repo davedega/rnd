@@ -3,4 +3,6 @@
     <string name="app_name">Backbase</string>
     <string name="cities">Cities</string>
     <string name="title_activity_maps">Map</string>
+    <string name="entries_not_loaded">Entries not loaded</string>
+
 </resources>
