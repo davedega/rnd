@@ -35,7 +35,6 @@ public class RnDPresenter implements RnDContract.Presenter {
         myTask.execute();
     }
 
-
     @Override
     public void showDetailInNewView(Entry entry) {
         ((RnDActivity) context).aja();
@@ -65,7 +64,6 @@ public class RnDPresenter implements RnDContract.Presenter {
 
             } catch (IOException ex) {
                 ex.printStackTrace();
-                Log.e("EntriesTask", "" + ex.getMessage());
                 return null;
             }
         }
