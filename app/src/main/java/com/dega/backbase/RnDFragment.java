@@ -81,6 +81,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
                     workRunnable = new Runnable() {
                         @Override
                         public void run() {
+                            //todo handle uppercase and camelcase strings in the search
                             Set<Entry> prefixEntries = prefixName(entriesSet, s.toString());
                             entries.clear();
                             entries.addAll(prefixEntries);
