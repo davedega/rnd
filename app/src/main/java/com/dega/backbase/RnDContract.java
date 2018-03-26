@@ -1,7 +1,10 @@
 package com.dega.backbase;
 
-import com.dega.backbase.model.EntriesResponse;
+import android.content.Context;
+
 import com.dega.backbase.model.Entry;
+
+import java.util.List;
 
 /**
  * Created by davedega on 25/03/18.
@@ -10,7 +13,7 @@ public interface RnDContract {
 
     interface Presenter {
 
-        Entry[] loadEntries();
+        void start();
 
         void showDetailInNewView(Entry entry);
     }
@@ -19,10 +22,9 @@ public interface RnDContract {
 
         void setPresenter(Presenter presenter);
 
-        void showEntriesInList(EntriesResponse entriesResponse);
+        void showEntriesInList(Context context, List<Entry> entries);
 
         void showErrorMessage(int message);
 
-        void showLastUpdate();
     }
 }

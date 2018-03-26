@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/vehicleItem"
+        android:id="@+id/entryItem"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -14,11 +14,11 @@
 
 
         <TextView
-            android:id="@+id/vehicleName"
+            android:id="@+id/entryName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/vehicle_name_list_item_margin"
+            android:layout_margin="@dimen/entry_name_list_item_margin"
             android:layout_weight="1"
             tools:text="@string/app_name" />
 
