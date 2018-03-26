@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -55,6 +56,13 @@ public class RnDFragment extends Fragment implements RnDContract.View {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.entries_fragment, container, false);
         listView = rootView.findViewById(R.id.entriesListView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Entry entry = (Entry) listView.getItemAtPosition(position);
+                presenter.showDetailInNewView(entry);
+            }
+        });
         progressBar = rootView.findViewById(R.id.progressBar);
         loadingContainer = rootView.findViewById(R.id.loadingContainer);
         searchEditText = rootView.findViewById(R.id.searchEditText);
@@ -161,5 +169,6 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             textView.setText(entries.get(position).toString());
             return rowView;
         }
+
     }
 }

@@ -2,7 +2,6 @@ package com.dega.backbase;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.dega.backbase.model.Entry;
 import com.google.gson.Gson;
@@ -37,9 +36,8 @@ public class RnDPresenter implements RnDContract.Presenter {
 
     @Override
     public void showDetailInNewView(Entry entry) {
-        ((RnDActivity) context).aja();
+        ((RnDActivity) context).showMap(entry);
     }
-
 
     // the purpose of this class is to load the file in background
     private class EntriesTask extends AsyncTask<Void, Integer, List<Entry> > {
