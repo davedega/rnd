@@ -1,10 +1,8 @@
 package com.dega.backbase;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 
 import com.dega.backbase.model.Entry;
 import com.google.gson.Gson;
@@ -117,8 +115,6 @@ public class RnDPresenter implements RnDContract.Presenter {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            Log.e("JA", "onProgressUpdate, " + values[0]);
-
             view.informUser(values[0]);
         }
 
