@@ -11,8 +11,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -35,9 +40,9 @@ public class RnDFragment extends Fragment implements RnDContract.View {
 
     private RnDContract.Presenter presenter;
 
+    private LinearLayout loadingContainer;
     private ListView listView;
     private ProgressBar progressBar;
-    private LinearLayout loadingContainer;
 
     private EditText searchEditText;
 
@@ -45,18 +50,45 @@ public class RnDFragment extends Fragment implements RnDContract.View {
     private List<Entry> originalentries;
     private List<Entry> entries;
 
+    View rootView;
+
     public static RnDFragment newInstance() {
         RnDFragment fragment = new RnDFragment();
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.entries_fragment, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        rootView = inflater.inflate(R.layout.entries_fragment, container, false);
         listView = rootView.findViewById(R.id.entriesListView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Entry entry = (Entry) listView.getItemAtPosition(position);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                presenter.showDetailInNewView(entry);
+
+            }
+        });
         progressBar = rootView.findViewById(R.id.progressBar);
         loadingContainer = rootView.findViewById(R.id.loadingContainer);
+
+        rootView.findViewById(R.id.clearImageView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchEditText.setText("");
+            }
+        });
+
         searchEditText = rootView.findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
             Handler handler = new Handler(Looper.getMainLooper());
@@ -75,14 +107,17 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             public void onTextChanged(final CharSequence s, int start,
                                       int before, int count) {
                 if (s.length() != 0) {
-                    final Set<Entry> entriesSet = new HashSet<Entry>(originalentries);
+
+                    // HashSet is much faster than TreeSet but offers no ordering guarantees like TreeSet.
+                    // a HashSet is only fast if you know the size of your dataset in advance, and this is the case here.
+                    final Set<Entry> entriesSet = new HashSet<>(originalentries);
 
                     handler.removeCallbacks(workRunnable);
                     workRunnable = new Runnable() {
                         @Override
                         public void run() {
-                            //todo handle uppercase and camelcase strings in the search
-                            Set<Entry> prefixEntries = prefixName(entriesSet, s.toString());
+
+                            Set<Entry> prefixEntries = presenter.searchByPrefix(entriesSet, s.toString());
                             entries.clear();
                             entries.addAll(prefixEntries);
                             adapter.notifyDataSetChanged();
@@ -98,12 +133,15 @@ public class RnDFragment extends Fragment implements RnDContract.View {
 
             }
         });
+
         return rootView;
     }
 
+
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -128,15 +166,9 @@ public class RnDFragment extends Fragment implements RnDContract.View {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    // todo explanation of this
-    public Set<Entry> prefixName(final Set<Entry> entries, final String prefix) {
-        final Set<Entry> entriesWithPrefix = new HashSet<>();
-        for (final Entry entry : entries) {
-            if (entry.getName().startsWith(prefix)) {
-                entriesWithPrefix.add(entry);
-            }
-        }
-        return entriesWithPrefix;
+    @Override
+    public void showSearchCity() {
+
     }
 
     // The Adapter lives within the view since is the only class who access it
@@ -161,5 +193,6 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             textView.setText(entries.get(position).toString());
             return rowView;
         }
+
     }
 }

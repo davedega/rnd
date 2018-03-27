@@ -2,9 +2,17 @@ package com.dega.backbase;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
+import com.dega.backbase.model.Entry;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -15,10 +23,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by davedega on 25/03/18.
  */
-public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback, MapContract.Presenter {
 
     private RnDPresenter presenter;
     private GoogleMap mMap;
+
+    //to center the map en the city selected
+    private LatLng citySelected;
+    private Entry entrySelected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +39,6 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_wrapper);
         attachListFragment();
     }
-
 
     private void attachListFragment() {
         RnDFragment entriesFragment = (RnDFragment) getSupportFragmentManager()
@@ -40,21 +52,25 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-
-    public void aja(){
-        FragmentManager fm = getSupportFragmentManager();
-        SupportMapFragment supportMapFragment =  SupportMapFragment.newInstance();
-        fm.beginTransaction().replace(R.id.content_frame, supportMapFragment).commit();
-        supportMapFragment.getMapAsync(this);
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.addMarker(new MarkerOptions().position(citySelected).title(entrySelected.toString()));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(citySelected, 10));
+    }
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
+    public void showMap(Entry entry) {
+        this.entrySelected = entry;
+        citySelected = new LatLng(entrySelected.getCoord().getLat(), entrySelected.getCoord().getLon());
+        FragmentManager fm = getSupportFragmentManager();
+        SupportMapFragment supportMapFragment = SupportMapFragment.newInstance();
+        fm.beginTransaction().add(R.id.content_frame, supportMapFragment).addToBackStack(null).commit();
+        supportMapFragment.getMapAsync(this);
     }
 }

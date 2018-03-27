@@ -1,8 +1,8 @@
 <resources>
-
-    <string name="app_name">Backbase</string>
+    <string name="app_name">Assignment RnD</string>
     <string name="cities">Cities</string>
     <string name="title_activity_maps">Map</string>
     <string name="entries_not_loaded">Entries not loaded</string>
-
+    <string name="search_city">Search city</string>
+    <string name="search">Search</string>
 </resources>
