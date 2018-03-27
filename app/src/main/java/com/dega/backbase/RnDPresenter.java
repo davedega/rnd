@@ -21,12 +21,17 @@ public class RnDPresenter implements RnDContract.Presenter {
 
     private final Context context;
     private RnDContract.View view;
+    private List<Entry> entries;
+
+
+    public void setEntries(List<Entry> entries) {
+        this.entries = entries;
+    }
 
     RnDPresenter(Context context, RnDContract.View view) {
         this.context = context;
         this.view = view;
     }
-
 
     @Override
     public void start() {
@@ -35,12 +40,17 @@ public class RnDPresenter implements RnDContract.Presenter {
     }
 
     @Override
+    public void showEntries() {
+        view.showEntriesInList(context, entries);
+    }
+
+    @Override
     public void showDetailInNewView(Entry entry) {
         ((RnDActivity) context).showMap(entry);
     }
 
     // the purpose of this class is to load the file in background
-    private class EntriesTask extends AsyncTask<Void, Integer, List<Entry> > {
+     class EntriesTask extends AsyncTask<Void, Integer, List<Entry> > {
         @Override
         protected List<Entry>  doInBackground(Void... voids) {
             try {
@@ -57,6 +67,7 @@ public class RnDPresenter implements RnDContract.Presenter {
                 }
                 reader.endArray();
                 reader.close();
+                setEntries(entries);
                 return entries;
 
 

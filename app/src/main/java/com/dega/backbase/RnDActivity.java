@@ -2,8 +2,11 @@ package com.dega.backbase;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.dega.backbase.model.Entry;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,6 +33,17 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
         attachListFragment();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     private void attachListFragment() {
         RnDFragment entriesFragment = (RnDFragment) getSupportFragmentManager()
@@ -47,10 +61,19 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
         mMap.addMarker(new MarkerOptions().position(citySelected).title(entrySelected.toString()));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(citySelected));
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
@@ -59,7 +82,7 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
         citySelected = new LatLng(entrySelected.getCoord().getLat(), entrySelected.getCoord().getLon());
         FragmentManager fm = getSupportFragmentManager();
         SupportMapFragment supportMapFragment = SupportMapFragment.newInstance();
-        fm.beginTransaction().replace(R.id.content_frame, supportMapFragment).commit();
+        fm.beginTransaction().add(R.id.content_frame, supportMapFragment).addToBackStack(null).commit();
         supportMapFragment.getMapAsync(this);
     }
 }

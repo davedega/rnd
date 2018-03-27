@@ -15,6 +15,8 @@ public interface RnDContract {
 
         void start();
 
+        void showEntries();
+
         void showDetailInNewView(Entry entry);
     }
 
