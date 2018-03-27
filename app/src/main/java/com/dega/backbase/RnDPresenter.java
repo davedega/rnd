@@ -27,16 +27,11 @@ public class RnDPresenter implements RnDContract.Presenter {
     private RnDContract.View view;
     private List<Entry> entries;
 
-
-    public List<Entry> getEntries() {
-        return entries;
-    }
-
-    public void setEntries(List<Entry> entries) {
+    void setEntries(List<Entry> entries) {
         this.entries = entries;
     }
 
-    public RnDPresenter() {
+    RnDPresenter() {
     }
 
     RnDPresenter(Context context, RnDContract.View view) {
@@ -120,13 +115,21 @@ public class RnDPresenter implements RnDContract.Presenter {
     }
 
 
-    private List<Entry> sortAlphabetical(List<Entry> entries) {
+    public List<Entry> sortAlphabetical(List<Entry> entries) {
         Collections.sort(entries, new Comparator<Entry>() {
             @Override
             public int compare(Entry entry1, Entry entry2) {
                 String s1 = entry1.getName();
                 String s2 = entry2.getName();
-                return s1.compareToIgnoreCase(s2);
+                int i = s1.compareToIgnoreCase(s2);
+                if(i !=0) return i;
+
+                String c1 = entry1.getCountry();
+                String c2 = entry2.getCountry();
+                i = c1.compareToIgnoreCase(c2);
+
+                return i;
+
             }
         });
 

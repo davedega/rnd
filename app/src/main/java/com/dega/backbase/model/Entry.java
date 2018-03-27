@@ -1,9 +1,5 @@
 package com.dega.backbase.model;
 
-import android.support.annotation.NonNull;
-
-import java.util.Comparator;
-
 /**
  * Created by davedega on 25/03/18.
  */

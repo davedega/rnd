@@ -9,11 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -40,6 +38,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
 
     private RnDContract.Presenter presenter;
 
+    private LinearLayout searchContainer;
     private LinearLayout loadingContainer;
     private ListView listView;
     private ProgressBar progressBar;
@@ -80,6 +79,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             }
         });
         progressBar = rootView.findViewById(R.id.progressBar);
+        searchContainer = rootView.findViewById(R.id.searchContainer);
         loadingContainer = rootView.findViewById(R.id.loadingContainer);
 
         rootView.findViewById(R.id.clearImageView).setOnClickListener(new View.OnClickListener() {
@@ -151,6 +151,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
 
     @Override
     public void showEntriesInList(Context context, List<Entry> loadedEntries) {
+        showSearchCity();
         this.originalentries = new ArrayList<>();
         this.originalentries.addAll(loadedEntries);
         this.entries = loadedEntries;
@@ -168,7 +169,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
 
     @Override
     public void showSearchCity() {
-
+        searchContainer.setVisibility(View.VISIBLE);
     }
 
     // The Adapter lives within the view since is the only class who access it
@@ -193,6 +194,5 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             textView.setText(entries.get(position).toString());
             return rowView;
         }
-
     }
 }

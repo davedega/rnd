@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
@@ -19,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 public class PresenterTest {
 
     RnDPresenter presenter = new RnDPresenter();
-    TreeSet<Entry> entries = new TreeSet<>();
-    TreeSet<Entry> expected = new TreeSet<>();
+    HashSet<Entry> entries = new HashSet<>();
+    HashSet<Entry> expected = new HashSet<>();
     Set<Entry> result;
 
 

@@ -4,6 +4,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:title="@string/app_name"
     android:background="?attr/colorPrimary"
     android:minHeight="?attr/actionBarSize"
     android:theme="?attr/actionBarTheme"
@@ -16,7 +17,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/searchEditText"
