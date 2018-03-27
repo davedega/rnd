@@ -5,4 +5,9 @@
     <string name="entries_not_loaded">Entries not loaded</string>
     <string name="search_city">Search city</string>
     <string name="search">Search</string>
+
+    <string name="loading_cities">Loading cities...</string>
+    <string name="cities_loaded">Cities loaded!</string>
+    <string name="starting_app">Starting app...</string>
+
 </resources>

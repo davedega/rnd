@@ -16,13 +16,10 @@ public interface RnDContract {
 
         void start();
 
-        void showEntries();
-
         void showDetailInNewView(Entry entry);
 
         Set<Entry> searchByPrefix(final Set<Entry> entries, final String prefix);
 
-        void onSearchCity();
     }
 
     interface View {
@@ -34,5 +31,7 @@ public interface RnDContract {
         void showErrorMessage(int message);
 
         void showSearchCity();
+
+        void informUser(int message);
     }
 }

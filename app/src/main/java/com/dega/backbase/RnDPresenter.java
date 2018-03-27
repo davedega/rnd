@@ -1,7 +1,10 @@
 package com.dega.backbase;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
 
 import com.dega.backbase.model.Entry;
 import com.google.gson.Gson;
@@ -27,6 +30,8 @@ public class RnDPresenter implements RnDContract.Presenter {
     private RnDContract.View view;
     private List<Entry> entries;
 
+    Handler handler = new Handler();
+
     void setEntries(List<Entry> entries) {
         this.entries = entries;
     }
@@ -43,11 +48,6 @@ public class RnDPresenter implements RnDContract.Presenter {
     public void start() {
         EntriesTask myTask = new EntriesTask();
         myTask.execute();
-    }
-
-    @Override
-    public void showEntries() {
-        view.showEntriesInList(context, entries);
     }
 
     @Override
@@ -69,38 +69,57 @@ public class RnDPresenter implements RnDContract.Presenter {
         return entriesWithPrefix;
     }
 
-    @Override
-    public void onSearchCity() {
-        view.showSearchCity();
-    }
 
     // the purpose of this class is to load the file in background
     class EntriesTask extends AsyncTask<Void, Integer, List<Entry>> {
         @Override
         protected List<Entry> doInBackground(Void... voids) {
             try {
-                InputStream inputStream = context.getAssets().open("cities.json");
                 Gson gson = new GsonBuilder().create();
-                JsonReader reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
                 List<Entry> entries = new ArrayList<>();
+                List<Entry> sorted;
+                InputStream inputStream = context.getAssets().open("cities.json");
+                JsonReader reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
+
                 reader.beginArray();
 
                 while (reader.hasNext()) {
                     Entry message = gson.fromJson(reader, Entry.class);
                     entries.add(message);
-                    //todo publishProgress
                 }
+
+                // Inform the user when cities are loaded
+                publishProgress(R.string.cities_loaded);
                 reader.endArray();
                 reader.close();
                 setEntries(entries);
 
-                List<Entry> sorted = sortAlphabetical(entries);
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Inform the user
+                        publishProgress(R.string.starting_app);
+
+                    }
+                }, 1500);
+
+                sorted = sortAlphabetical(entries);
+
                 return sorted;
 
             } catch (IOException ex) {
                 ex.printStackTrace();
                 return null;
             }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.e("JA", "onProgressUpdate, " + values[0]);
+
+            view.informUser(values[0]);
         }
 
         @Override
@@ -122,7 +141,7 @@ public class RnDPresenter implements RnDContract.Presenter {
                 String s1 = entry1.getName();
                 String s2 = entry2.getName();
                 int i = s1.compareToIgnoreCase(s2);
-                if(i !=0) return i;
+                if (i != 0) return i;
 
                 String c1 = entry1.getCountry();
                 String c2 = entry2.getCountry();

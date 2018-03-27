@@ -44,6 +44,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
     private ProgressBar progressBar;
 
     private EditText searchEditText;
+    private TextView updateMessage;
 
     private EntriesAdapter adapter;
     private List<Entry> originalentries;
@@ -89,6 +90,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             }
         });
 
+        updateMessage = rootView.findViewById(R.id.updateTextView);
         searchEditText = rootView.findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
             Handler handler = new Handler(Looper.getMainLooper());
@@ -170,6 +172,11 @@ public class RnDFragment extends Fragment implements RnDContract.View {
     @Override
     public void showSearchCity() {
         searchContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void informUser(int message) {
+        updateMessage.setText(message);
     }
 
     // The Adapter lives within the view since is the only class who access it
