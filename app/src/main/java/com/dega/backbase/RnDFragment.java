@@ -11,6 +11,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +40,9 @@ public class RnDFragment extends Fragment implements RnDContract.View {
 
     private RnDContract.Presenter presenter;
 
+    private LinearLayout loadingContainer;
     private ListView listView;
     private ProgressBar progressBar;
-    private LinearLayout loadingContainer;
 
     private EditText searchEditText;
 
@@ -55,10 +57,15 @@ public class RnDFragment extends Fragment implements RnDContract.View {
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.entries_fragment, container, false);
         listView = rootView.findViewById(R.id.entriesListView);
@@ -74,8 +81,15 @@ public class RnDFragment extends Fragment implements RnDContract.View {
         });
         progressBar = rootView.findViewById(R.id.progressBar);
         loadingContainer = rootView.findViewById(R.id.loadingContainer);
-        searchEditText = rootView.findViewById(R.id.searchEditText);
 
+        rootView.findViewById(R.id.clearImageView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchEditText.setText("");
+            }
+        });
+
+        searchEditText = rootView.findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
             Handler handler = new Handler(Looper.getMainLooper());
             Runnable workRunnable;
@@ -120,26 +134,14 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             }
         });
 
-        searchEditText.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getRawX() >= (searchEditText.getRight() - searchEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        // your action here
-                        searchEditText.setText("");
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
         return rootView;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -162,6 +164,11 @@ public class RnDFragment extends Fragment implements RnDContract.View {
     @Override
     public void showErrorMessage(int message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSearchCity() {
+
     }
 
     // The Adapter lives within the view since is the only class who access it

@@ -1,5 +1,9 @@
 package com.dega.backbase.model;
 
+import android.support.annotation.NonNull;
+
+import java.util.Comparator;
+
 /**
  * Created by davedega on 25/03/18.
  */
@@ -49,8 +53,9 @@ public class Entry {
 
     @Override
     public String toString() {
-        return  name + ", "+country;
+        return name + ", " + country;
     }
+
 
     @Override
     public boolean equals(Object o) {

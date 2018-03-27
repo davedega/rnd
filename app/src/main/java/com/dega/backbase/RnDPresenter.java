@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +27,10 @@ public class RnDPresenter implements RnDContract.Presenter {
     private RnDContract.View view;
     private List<Entry> entries;
 
+
+    public List<Entry> getEntries() {
+        return entries;
+    }
 
     public void setEntries(List<Entry> entries) {
         this.entries = entries;
@@ -68,6 +74,11 @@ public class RnDPresenter implements RnDContract.Presenter {
         return entriesWithPrefix;
     }
 
+    @Override
+    public void onSearchCity() {
+        view.showSearchCity();
+    }
+
     // the purpose of this class is to load the file in background
     class EntriesTask extends AsyncTask<Void, Integer, List<Entry>> {
         @Override
@@ -87,7 +98,9 @@ public class RnDPresenter implements RnDContract.Presenter {
                 reader.endArray();
                 reader.close();
                 setEntries(entries);
-                return entries;
+
+                List<Entry> sorted = sortAlphabetical(entries);
+                return sorted;
 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -104,5 +117,19 @@ public class RnDPresenter implements RnDContract.Presenter {
                 view.showErrorMessage(R.string.entries_not_loaded);
             }
         }
+    }
+
+
+    private List<Entry> sortAlphabetical(List<Entry> entries) {
+        Collections.sort(entries, new Comparator<Entry>() {
+            @Override
+            public int compare(Entry entry1, Entry entry2) {
+                String s1 = entry1.getName();
+                String s2 = entry2.getName();
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+
+        return entries;
     }
 }

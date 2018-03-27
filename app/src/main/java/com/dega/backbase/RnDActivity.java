@@ -2,11 +2,15 @@ package com.dega.backbase;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.dega.backbase.model.Entry;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,8 +27,11 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private RnDPresenter presenter;
     private GoogleMap mMap;
+
+    //to center the map en the city selected
     private LatLng citySelected;
     private Entry entrySelected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,18 +39,6 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_wrapper);
         attachListFragment();
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 
     private void attachListFragment() {
         RnDFragment entriesFragment = (RnDFragment) getSupportFragmentManager()
@@ -57,16 +52,11 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.addMarker(new MarkerOptions().position(citySelected).title(entrySelected.toString()));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(citySelected, 10));
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-
     }
 
     @Override
