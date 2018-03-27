@@ -62,10 +62,8 @@ public class RnDActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.addMarker(new MarkerOptions().position(citySelected).title(entrySelected.toString()));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(citySelected));
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(citySelected, 10));
         ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 

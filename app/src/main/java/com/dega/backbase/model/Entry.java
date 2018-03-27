@@ -10,6 +10,11 @@ public class Entry {
     private Integer id;
     private Coord coord;
 
+    public Entry(String country, String name) {
+        this.country = country;
+        this.name = name;
+    }
+
     public String getCountry() {
         return country;
     }
@@ -45,5 +50,24 @@ public class Entry {
     @Override
     public String toString() {
         return  name + ", "+country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Entry)) return false;
+
+        Entry entry = (Entry) o;
+
+        if (getCountry() != null ? !getCountry().equals(entry.getCountry()) : entry.getCountry() != null)
+            return false;
+        return getName() != null ? getName().equals(entry.getName()) : entry.getName() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getCountry() != null ? getCountry().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        return result;
     }
 }

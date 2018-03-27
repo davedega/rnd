@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -25,7 +26,6 @@ import android.widget.Toast;
 
 import com.dega.backbase.model.Entry;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -66,6 +66,8 @@ public class RnDFragment extends Fragment implements RnDContract.View {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Entry entry = (Entry) listView.getItemAtPosition(position);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 presenter.showDetailInNewView(entry);
 
             }
@@ -73,6 +75,51 @@ public class RnDFragment extends Fragment implements RnDContract.View {
         progressBar = rootView.findViewById(R.id.progressBar);
         loadingContainer = rootView.findViewById(R.id.loadingContainer);
         searchEditText = rootView.findViewById(R.id.searchEditText);
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            Handler handler = new Handler(Looper.getMainLooper());
+            Runnable workRunnable;
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, int start,
+                                      int before, int count) {
+                if (s.length() != 0) {
+
+                    // HashSet is much faster than TreeSet but offers no ordering guarantees like TreeSet.
+                    // a HashSet is only fast if you know the size of your dataset in advance, and this is the case here.
+                    final Set<Entry> entriesSet = new HashSet<>(originalentries);
+
+                    handler.removeCallbacks(workRunnable);
+                    workRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Set<Entry> prefixEntries = presenter.searchByPrefix(entriesSet, s.toString());
+                            entries.clear();
+                            entries.addAll(prefixEntries);
+                            adapter.notifyDataSetChanged();
+                        }
+                    };
+                    handler.postDelayed(workRunnable, 300 /*delay*/);
+                } else {
+                    // Reset the adapter to orignal state
+                    entries.clear();
+                    entries.addAll(originalentries);
+                    adapter.notifyDataSetChanged();
+                }
+
+            }
+        });
+
         searchEditText.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -92,53 +139,7 @@ public class RnDFragment extends Fragment implements RnDContract.View {
                 return false;
             }
         });
-        searchEditText.addTextChangedListener(new TextWatcher() {
-            Handler handler = new Handler(Looper.getMainLooper());
-            Runnable workRunnable;
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(final CharSequence s, int start,
-                                      int before, int count) {
-                if (s.length() != 0) {
-                    final Set<Entry> entriesSet = new HashSet<Entry>(originalentries);
-
-                    handler.removeCallbacks(workRunnable);
-                    workRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            //todo handle uppercase and camelcase strings in the search
-                            Set<Entry> prefixEntries = prefixName(entriesSet, s.toString());
-                            entries.clear();
-                            entries.addAll(prefixEntries);
-                            adapter.notifyDataSetChanged();
-                        }
-                    };
-                    handler.postDelayed(workRunnable, 300 /*delay*/);
-                } else {
-                    // Reset the adapter to orignal state
-                    entries.clear();
-                    entries.addAll(originalentries);
-                    adapter.notifyDataSetChanged();
-                }
-
-            }
-        });
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("FRAG","onResume");
     }
 
     @Override
@@ -161,17 +162,6 @@ public class RnDFragment extends Fragment implements RnDContract.View {
     @Override
     public void showErrorMessage(int message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    // todo explanation of this
-    public Set<Entry> prefixName(final Set<Entry> entries, final String prefix) {
-        final Set<Entry> entriesWithPrefix = new HashSet<>();
-        for (final Entry entry : entries) {
-            if (entry.getName().startsWith(prefix)) {
-                entriesWithPrefix.add(entry);
-            }
-        }
-        return entriesWithPrefix;
     }
 
     // The Adapter lives within the view since is the only class who access it
