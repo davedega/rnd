@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by davedega on 27/03/18.
  */
-public class PresenterTest {
+public class RnDPresenterTest {
 
     RnDPresenter presenter = new RnDPresenter();
     HashSet<Entry> entries = new HashSet<>();

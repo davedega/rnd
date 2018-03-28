@@ -67,10 +67,7 @@ public class SortTest {
 
     @Test
     public void sortAlphabeticalFail() throws Exception {
-
-
-//        .toArray(), expected.toArray());
-
+        
         assertFalse(expected.equals(entries));
 
     }
